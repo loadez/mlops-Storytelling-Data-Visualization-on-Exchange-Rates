@@ -170,3 +170,4 @@ def filterResult(exchange,country,pairs,selection):
 
 st.write(filterResult(exchange,country,countryPair,selectedPair))
 st.line_chart(filterResult(exchange,country,countryPair,selectedPair))
+st.line_chart(subselectByCoint(exchange,selectedPair))
