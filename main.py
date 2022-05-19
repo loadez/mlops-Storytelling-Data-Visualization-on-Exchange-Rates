@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 
 @st.cache
 def readDataframes():
@@ -95,9 +96,6 @@ st.line_chart(subselectByCoint(exchange,selectedCoin))
 
 """
 ## Impacto do câmbio na exportação/importação
-É possível utilizar os seguintes filtros:
-* Data
-* Por moeda 
 """
 
 countryPair = {
@@ -151,6 +149,24 @@ st.write(selectedPair)
 def filterResult(exchange,country,pairs,selection):
     selectedCountry = pairs[selection]
     selectedCoin = selection
-    return selectedCountry,selectedCoin
+    months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
+
+    countrySubset = country[country['CTYNAME']==selectedCountry]
+
+    data = []
+    for r in countrySubset.iterrows():
+        y = r[1]
+        for m in months:
+            data.append({
+                'date':'%s %s'%(m,y['year']),
+                'importValue': y['I%s'%m],
+                'exportValue': y['E%s'%m],
+                })
+    
+    dt = pd.DataFrame(data)
+
+    dt = dt.set_index('date')
+    return dt
 
 st.write(filterResult(exchange,country,countryPair,selectedPair))
+st.line_chart(filterResult(exchange,country,countryPair,selectedPair))
